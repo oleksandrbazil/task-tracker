@@ -6,7 +6,14 @@ const initialState = {
     start: '',
     end: '',
   },
-  list: [],
+  list: [
+    {
+      id: 1,
+      name: 'Task Example 1',
+      start: '2019-04-24T15:15:19.994Z',
+      end: '2019-04-24T15:30:25.867Z',
+    },
+  ],
 };
 
 export default (state = initialState, action) => {

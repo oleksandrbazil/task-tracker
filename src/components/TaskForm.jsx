@@ -36,8 +36,7 @@ class TaskForm extends React.Component {
 
   startTask() {
     // 1. Prepare task data
-    // start - we want to handle date format as numbers, so use "+"
-    const start = +new Date();
+    const start = new Date().getTime();
     const { name } = this.state;
 
     // 2. Update Redux Store
@@ -49,7 +48,7 @@ class TaskForm extends React.Component {
 
   finishTask() {
     // 1. Prepare task data
-    const end = +new Date();
+    const end = new Date().getTime();
     const { name, start } = this.state;
 
     // 2. Update Redux Store

@@ -1,7 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import Task from '../classes/Task';
 import { removeTask } from '../actions/tasks';
+import { Link } from 'react-router-dom';
+import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -9,10 +12,14 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
 
-const TasksLog = ({ list, removeTask }) => {
+const styles = theme => ({
+  table: {},
+});
+
+const TasksLog = ({ list, removeTask, classes }) => {
   return (
     <div>
-      <Table>
+      <Table className={classes.table}>
         <TableHead>
           <TableRow>
             <TableCell>№</TableCell>
@@ -25,21 +32,26 @@ const TasksLog = ({ list, removeTask }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {list.map(({ id, name, start, end }, index) => (
-            <TableRow key={`row${index}`}>
-              <TableCell>{id}</TableCell>
-              <TableCell>{name}</TableCell>
-              <TableCell>{start}</TableCell>
-              <TableCell>{end}</TableCell>
-              <TableCell>{start - end}</TableCell>
-              <TableCell>
-                <Button href={`/tasks/${id}`}>Info</Button>
-              </TableCell>
-              <TableCell>
-                <Button onClick={() => removeTask({ id })}>Delete</Button>
-              </TableCell>
-            </TableRow>
-          ))}
+          {list.map((item, index) => {
+            const { id, name, timeStart, timeEnd, timeSpent } = new Task(item);
+            return (
+              <TableRow key={`row${index}`}>
+                <TableCell>{id}</TableCell>
+                <TableCell>{name}</TableCell>
+                <TableCell>{timeStart}</TableCell>
+                <TableCell>{timeEnd}</TableCell>
+                <TableCell>{timeSpent}</TableCell>
+                <TableCell>
+                  <Button component={Link} to={`/tasks/${id}`}>
+                    Info
+                  </Button>
+                </TableCell>
+                <TableCell>
+                  <Button onClick={() => removeTask({ id })}>Delete</Button>
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </div>
@@ -53,7 +65,9 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch =>
   bindActionCreators({ removeTask }, dispatch);
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(TasksLog);
+export default withStyles(styles)(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(TasksLog)
+);

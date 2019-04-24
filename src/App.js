@@ -1,13 +1,16 @@
 import React from 'react';
-import TaskForm from './components/TaskForm';
-import TaskTabs from './components/TaskTabs';
+import AppRoutes from './routes';
+import Grid from '@material-ui/core/Grid';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
-      <TaskForm />
-      <TaskTabs />
+      <Grid container spacing={24} justify={'center'}>
+        <Grid item xs={10}>
+          <AppRoutes />
+        </Grid>
+      </Grid>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -6,33 +7,44 @@ import TasksLog from './TasksLog';
 import TasksChart from './TasksChart';
 
 class TaskTabs extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { tab: 0 };
-  }
-
-  handleChangeTab(event, tab) {
-    this.setState({ tab });
+  handleChangeTab(event, value) {
+    this.props.history.push(value);
   }
 
   render() {
-    const { tab } = this.state;
+    // const { tab } = this.state;
+    const {
+      history: {
+        location: { pathname, hash },
+      },
+    } = this.props;
+
+    // define available tab routes
+    const tabRoutes = {
+      log: '/',
+      chart: '/#chart',
+    };
+
+    // Catch invalid tab routes
+    const currentTab =
+      pathname + hash === tabRoutes.chart ? tabRoutes.chart : tabRoutes.log;
+
     return (
       <div>
         <AppBar position="static">
           <Tabs
-            value={tab}
-            onChange={(event, tab) => this.handleChangeTab(event, tab)}
+            value={currentTab}
+            onChange={(event, value) => this.handleChangeTab(event, value)}
           >
-            <Tab label="Tasks Log" />
-            <Tab label="Tasks chart" />
+            <Tab label="Tasks Log" value={tabRoutes.log} />
+            <Tab label="Tasks chart" value={tabRoutes.chart} />
           </Tabs>
-          {tab === 0 && <TasksLog />}
-          {tab === 1 && <TasksChart />}
+          {currentTab === tabRoutes.log && <TasksLog />}
+          {currentTab === tabRoutes.chart && <TasksChart />}
         </AppBar>
       </div>
     );
   }
 }
 
-export default TaskTabs;
+export default withRouter(TaskTabs);
