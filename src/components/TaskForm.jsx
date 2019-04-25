@@ -1,78 +1,90 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setCurrentTask, addTask } from '../actions/tasks';
+import { startTask, renameTask, finishTask } from '../actions/tasks';
+import { withStyles } from '@material-ui/core/es/styles';
 import Button from '@material-ui/core/Button';
+import FormControl from '@material-ui/core/FormControl';
 import Input from '@material-ui/core/Input';
 
 const initialState = {
   name: '',
-  start: '',
 };
+
+const styles = theme => ({
+  root: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  form: {
+    textAlign: 'center',
+    margin: 20,
+  },
+  circle: {
+    height: '200px',
+    width: '200px',
+    borderRadius: '50%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    color: theme.palette.primary['900'],
+    margin: 20,
+    fontSize: 30,
+    boxShadow:
+      '0px 1px 5px 0px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.12)',
+  },
+});
 
 class TaskForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = initialState;
+    const { name } = this.props;
+    this.state = {
+      ...initialState,
+      name,
+    };
   }
 
-  componentDidMount() {
-    // We would like to restore current task from LocalStore after user returns
-    // const { current: { name, start } } = this.props;
-    // if (name || start) {
-    //   this.setState({ name, start });
-    // }
-  }
-
-  handleSubmit(e) {
+  handleOnSubmit(e) {
     e.preventDefault();
-    const { start } = this.state;
+    const { start, startTask, finishTask } = this.props;
+
+    // try to save task name anyway
+    this.renameTask();
+
+    // select required action
     if (start) {
-      this.finishTask();
+      finishTask();
     } else {
-      this.startTask();
+      startTask();
     }
   }
 
-  startTask() {
-    // 1. Prepare task data
-    const start = new Date().getTime();
-    const { name } = this.state;
-
-    // 2. Update Redux Store
-    this.props.setCurrentTask({ start });
-
-    // 3. Update component state
-    this.setState({ start, name });
-  }
-
-  finishTask() {
-    // 1. Prepare task data
-    const end = new Date().getTime();
-    const { name, start } = this.state;
-
-    // 2. Update Redux Store
-    this.props.addTask({
-      name,
-      start,
-      end,
-    });
-
-    // 3. Reset component state
-    this.setState(initialState);
-  }
-
   handleOnChange(e) {
+    // We could update right now currentTask in Redux Store,
+    // but this will lead to running LocalStorage.saveState() method with JSON.stringify.
+    // It's not a good idea because stringify is resource-intensive method
     this.setState({ name: e.target.value });
   }
 
+  handleOnBlur() {
+    this.renameTask();
+  }
+
+  renameTask() {
+    const { name } = this.state;
+    this.props.renameTask({ name });
+  }
+
   render() {
-    const { name, start } = this.state;
+    const { name } = this.state;
+    const { start, classes } = this.props;
 
     return (
-      <div>
-        <form onSubmit={e => this.handleSubmit(e)}>
-          <div>
+      <div className={classes.root}>
+        <form onSubmit={e => this.handleOnSubmit(e)} className={classes.form}>
+          <FormControl>
             <Input
               type="text"
               name="name"
@@ -80,21 +92,16 @@ class TaskForm extends React.Component {
               value={name}
               placeholder="Name of your task"
               onChange={e => this.handleOnChange(e)}
+              onBlur={() => this.handleOnBlur()}
             />
-          </div>
+          </FormControl>
 
-          <div>
-            <Input
-              type="text"
-              name="time"
-              id="time"
-              value={start}
-              placeholder={'00:00:00'}
-              disabled
-            />
-          </div>
+          <FormControl className={classes.circle}>
+            <div>{start || '00:00:00'}</div>
+            <Input type="hidden" name="time" id="time" value={start} disabled />
+          </FormControl>
 
-          <Button type="submit"> {start ? 'stop' : 'start'}</Button>
+          <Button type="submit">{start ? 'Stop' : 'Start'}</Button>
         </form>
       </div>
     );
@@ -102,19 +109,23 @@ class TaskForm extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  current: state.tasks.current,
+  name: state.tasks.current.name,
+  start: state.tasks.current.start,
 });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      setCurrentTask,
-      addTask,
+      startTask,
+      renameTask,
+      finishTask,
     },
     dispatch
   );
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(TaskForm);
+export default withStyles(styles)(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(TaskForm)
+);

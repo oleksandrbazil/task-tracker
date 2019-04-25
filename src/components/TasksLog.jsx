@@ -13,13 +13,15 @@ import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
 
 const styles = theme => ({
-  table: {},
+  button: {
+    margin: '10px',
+  },
 });
 
 const TasksLog = ({ list, removeTask, classes }) => {
   return (
     <div>
-      <Table className={classes.table}>
+      <Table>
         <TableHead>
           <TableRow>
             <TableCell>№</TableCell>
@@ -31,7 +33,7 @@ const TasksLog = ({ list, removeTask, classes }) => {
             <TableCell>Delete</TableCell>
           </TableRow>
         </TableHead>
-        <TableBody>
+        <TableBody className={classes.tableBody}>
           {list.map((item, index) => {
             const { id, name, timeStart, timeEnd, timeSpent } = new Task(item);
             return (
@@ -47,7 +49,12 @@ const TasksLog = ({ list, removeTask, classes }) => {
                   </Button>
                 </TableCell>
                 <TableCell>
-                  <Button onClick={() => removeTask({ id })}>Delete</Button>
+                  <Button
+                    className={classes.button}
+                    onClick={() => removeTask({ id })}
+                  >
+                    Delete
+                  </Button>
                 </TableCell>
               </TableRow>
             );
