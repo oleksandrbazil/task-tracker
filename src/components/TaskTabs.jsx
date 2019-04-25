@@ -34,13 +34,14 @@ class TaskTabs extends React.Component {
           <Tabs
             value={currentTab}
             onChange={(event, value) => this.handleChangeTab(event, value)}
+            variant="fullWidth"
           >
-            <Tab label="Tasks Log" value={tabRoutes.log} />
-            <Tab label="Tasks chart" value={tabRoutes.chart} />
+            <Tab label="Tasks Log" value={tabRoutes.log} fullWidth />
+            <Tab label="Tasks chart" value={tabRoutes.chart} fullWidth />
           </Tabs>
-          {currentTab === tabRoutes.log && <TasksLog />}
-          {currentTab === tabRoutes.chart && <TasksChart />}
         </AppBar>
+        {currentTab === tabRoutes.log && <TasksLog />}
+        {currentTab === tabRoutes.chart && <TasksChart />}
       </div>
     );
   }

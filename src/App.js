@@ -10,7 +10,7 @@ function App() {
   return (
     <div className="App">
       <MuiThemeProvider theme={theme}>
-        <Grid container spacing={24} justify={'center'}>
+        <Grid container justify={'center'}>
           <Grid item xs={10}>
             <ModalMessage />
             <AppRoutes />
