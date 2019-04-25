@@ -2,10 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { startTask, renameTask, finishTask } from '../actions/tasks';
-import { withStyles } from '@material-ui/core/es/styles';
+import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
 import Input from '@material-ui/core/Input';
+import TaskTimer from './TaskTimer';
 
 const initialState = {
   name: '',
@@ -20,19 +21,6 @@ const styles = theme => ({
   form: {
     textAlign: 'center',
     margin: 20,
-  },
-  circle: {
-    height: '200px',
-    width: '200px',
-    borderRadius: '50%',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    color: theme.palette.primary['900'],
-    margin: 20,
-    fontSize: 30,
-    boxShadow:
-      '0px 1px 5px 0px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.12)',
   },
 });
 
@@ -99,10 +87,7 @@ class TaskForm extends React.Component {
             />
           </FormControl>
 
-          <FormControl className={classes.circle}>
-            <div>{start || '00:00:00'}</div>
-            <Input type="hidden" name="time" id="time" value={start} disabled />
-          </FormControl>
+          <TaskTimer start={start} />
 
           <Button type="submit">{start ? 'Stop' : 'Start'}</Button>
         </form>

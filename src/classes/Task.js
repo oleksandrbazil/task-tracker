@@ -2,8 +2,8 @@ export default class Task {
   constructor({ id, name, start, end }) {
     this.id = id;
     this.name = name;
-    this.dateStart = new Date(start);
-    this.dateEnd = new Date(end);
+    this.dateStart = start ? new Date(start) : new Date();
+    this.dateEnd = end ? new Date(end) : new Date();
 
     // Following format will using in Task Table and Task Info components
     // Maybe the best way is to use momentum.js
