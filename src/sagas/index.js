@@ -6,6 +6,7 @@ import {
   FINISH_TASK,
   RESET_CURRENT_TASK,
 } from '../actions/tasks';
+import { OPEN_MODAL } from '../actions/modal';
 import { saveState } from '../localStorage';
 
 // Selectors
@@ -17,14 +18,22 @@ function* saveStateToLocalStorage() {
   saveState({ tasks });
 }
 
-function* addTask() {
+function* addTask(action) {
   const { list, current } = yield select(getTasksStore);
 
   try {
     // check if any key has empty value
     Object.keys(current).forEach(key => {
       if (!current[key]) {
-        throw Error(`Empty field ${key}`);
+        let message;
+        if (key) {
+          message = `You are trying to finish task without ${key}, enter the title and try again`;
+        } else {
+          message = `You are trying to finish task without ${key}. `;
+        }
+        let e = new Error(message);
+        e.title = `Empty task ${key}`;
+        throw e;
       }
     });
 
@@ -43,8 +52,17 @@ function* addTask() {
     yield put({
       type: RESET_CURRENT_TASK,
     });
+
+    // reset component state
+    action.options.callback();
   } catch (e) {
-    //TODO show Modal Error Message
+    yield put({
+      type: OPEN_MODAL,
+      payload: {
+        title: e.title || 'Error',
+        message: e.message,
+      },
+    });
   }
 }
 

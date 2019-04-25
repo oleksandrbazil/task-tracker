@@ -13,7 +13,6 @@ class TaskTabs extends React.Component {
 
   render() {
     const {
-      classes,
       history: {
         location: { pathname, hash },
       },

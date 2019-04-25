@@ -3,6 +3,7 @@ import AppRoutes from './routes';
 import Grid from '@material-ui/core/Grid';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import theme from './theme';
+import ModalMessage from './components/ModalMessage';
 import './App.css';
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
       <MuiThemeProvider theme={theme}>
         <Grid container spacing={24} justify={'center'}>
           <Grid item xs={10}>
+            <ModalMessage />
             <AppRoutes />
           </Grid>
         </Grid>

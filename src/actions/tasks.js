@@ -23,12 +23,15 @@ export const renameTask = ({ name }) => ({
   },
 });
 
-export const finishTask = () => {
+export const finishTask = ({ callback }) => {
   const end = new Date().getTime();
   return {
     type: FINISH_TASK,
     payload: {
       end,
+    },
+    options: {
+      callback,
     },
   };
 };

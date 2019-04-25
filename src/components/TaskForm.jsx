@@ -55,10 +55,13 @@ class TaskForm extends React.Component {
 
     // select required action
     if (start) {
-      finishTask();
+      finishTask({ callback: () => this.resetForm() });
     } else {
       startTask();
     }
+  }
+  resetForm() {
+    this.setState(initialState);
   }
 
   handleOnChange(e) {
