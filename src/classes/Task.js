@@ -1,36 +1,34 @@
+import moment from 'moment';
+
+const TIME_FORMAT = 'HH:mm:ss';
+
 export default class Task {
-  constructor({ id, name, start, end }) {
+  constructor({ id, name, start = new Date(), end = new Date() }) {
     this.id = id;
     this.name = name;
-    this.dateStart = start ? new Date(start) : new Date();
-    this.dateEnd = end ? new Date(end) : new Date();
-
-    // Following format will using in Task Table and Task Info components
-    // Maybe the best way is to use momentum.js
-    this.timeFormat = date => {
-      const twoDigit = i => (i < 10 ? `0${i}` : i);
-      return (
-        twoDigit(date.getHours()) +
-        ':' +
-        twoDigit(date.getMinutes()) +
-        ':' +
-        twoDigit(date.getSeconds())
-      );
-    };
+    this.startMoment = moment(start);
+    this.finishMoment = moment(end);
   }
 
   get timeStart() {
-    return this.timeFormat(this.dateStart);
+    return this.startMoment.format(TIME_FORMAT);
   }
 
   get timeEnd() {
-    return this.timeFormat(this.dateEnd);
+    return this.finishMoment.format(TIME_FORMAT);
   }
 
   get timeSpent() {
-    const spent = this.dateEnd - this.dateStart;
-    // we have to correct spent time with timezone offset
-    const timezoneDelta = new Date().getTimezoneOffset() * 60000;
-    return this.timeFormat(new Date(spent + timezoneDelta));
+    const spent = moment.utc(this.finishMoment.diff(this.startMoment));
+
+    return spent.isValid() ? spent.format(TIME_FORMAT) : '00:00:00';
+  }
+
+  get startHours() {
+    return moment(this.startMoment).hours();
+  }
+
+  spent(unit) {
+    return this.finishMoment.diff(this.startMoment, unit);
   }
 }
