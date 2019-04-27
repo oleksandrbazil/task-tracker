@@ -11,23 +11,24 @@ const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case TYPES.START_TASK:
+    case TYPES.UPDATE_CURRENT_TASK:
+      // Maybe it's not the right way, but this will reduce a few actions
+      // and make possible to simply generate new task
+      const {
+        start = state.current.start,
+        name = state.current.name,
+        end = state.current.end,
+      } = action.payload;
+
       return {
         ...state,
         current: {
-          ...state.current,
-          start: action.payload.start,
+          start,
+          name,
+          end,
         },
       };
-    case TYPES.RENAME_TASK:
-      return {
-        ...state,
-        current: {
-          ...state.current,
-          name: action.payload.name,
-        },
-      };
-    case TYPES.FINISH_TASK:
+    case TYPES.FINISH_CURRENT_TASK:
       return {
         ...state,
         current: {
@@ -49,6 +50,12 @@ export default (state = initialState, action) => {
       return {
         ...state,
         list: state.list.filter(task => task.id !== action.payload.id),
+      };
+
+    case TYPES.REMOVE_ALL_TASKS:
+      return {
+        ...state,
+        list: [],
       };
     default:
       return state;

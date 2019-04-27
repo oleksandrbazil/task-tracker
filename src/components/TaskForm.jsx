@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { startTask, renameTask, finishTask } from '../actions/tasks';
+import { updateCurrentTask, finishTask } from '../actions/tasks';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
@@ -36,7 +36,7 @@ class TaskForm extends React.Component {
 
   handleOnSubmit(e) {
     e.preventDefault();
-    const { start, startTask, finishTask } = this.props;
+    const { start, finishTask, updateCurrentTask } = this.props;
 
     // try to save task name anyway
     this.renameTask();
@@ -45,7 +45,7 @@ class TaskForm extends React.Component {
     if (start) {
       finishTask({ callback: () => this.resetForm() });
     } else {
-      startTask();
+      updateCurrentTask({ start: new Date().getTime() });
     }
   }
   resetForm() {
@@ -65,7 +65,7 @@ class TaskForm extends React.Component {
 
   renameTask() {
     const { name } = this.state;
-    this.props.renameTask({ name });
+    this.props.updateCurrentTask({ name });
   }
 
   render() {
@@ -104,9 +104,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      startTask,
-      renameTask,
       finishTask,
+      updateCurrentTask,
     },
     dispatch
   );

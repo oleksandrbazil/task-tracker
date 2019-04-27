@@ -11,8 +11,9 @@ import {
   Bar,
 } from 'recharts';
 import DataItems from '../classes/DataItems';
-
-const GOLDEN_RATIO = 1.61;
+import TaskGenerator from './TaskGenerator';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 const generateColor = () => {
   return (
@@ -26,30 +27,25 @@ const generateColor = () => {
 class TasksChart extends React.Component {
   constructor(props) {
     super(props);
-    this.rootEl = React.createRef();
-    this.rootElWidth = 800;
-  }
-
-  componentDidMount() {
-    // try to setup root width
-    this.rootElWidth = this.rootEl.current.offsetWidth;
-  }
-
-  getChartHeight() {
-    // according to the Golden Ration rule (height = 100%, width = 161%)
-    return this.rootElWidth / GOLDEN_RATIO;
+    this.state = {
+      simultaneous: false,
+    };
   }
 
   render() {
+    const { simultaneous } = this.state;
     const { tasks } = this.props;
-    const data = new DataItems(tasks).data;
+    const dataItems = new DataItems(tasks);
+    const data = simultaneous
+      ? dataItems.getSimultaneousData
+      : dataItems.getData;
+
     return (
       <div ref={this.rootEl}>
-        <ResponsiveContainer width="100%" height={this.getChartHeight()}>
+        <ResponsiveContainer width="100%" height={600}>
           <BarChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <XAxis dataKey="tasks" />
+            <XAxis dataKey="name" domain={[0, 60]} />
             <YAxis />
             <Tooltip />
             <Legend legendType="circle" />
@@ -57,12 +53,42 @@ class TasksChart extends React.Component {
               <Bar
                 key={task.id}
                 dataKey={task.name}
-                stackId="all"
+                stackId={!simultaneous ? `taskOneByOne` : null}
                 fill={generateColor()}
               />
             ))}
           </BarChart>
         </ResponsiveContainer>
+        <div>
+          <TaskGenerator />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={simultaneous}
+                onChange={() => {
+                  this.setState({ simultaneous: !simultaneous });
+                }}
+              />
+            }
+            label={'Simultaneous tasks'}
+          />
+          <div style={{ maxWidth: '700px' }}>
+            <p>
+              Трекер разработан на основе предпосылки что в определенный момент
+              времени может выполняться только 1 задача. По этому, в построенном
+              графике не может быть более 60 минут в 1 часе.
+            </p>
+            <p>
+              В тоже время, генератор случайных задач не учитывает временные
+              наложения задач между собой при построении массива. Это может
+              создать ситуацию при которой 2 задачи выполняються одновременно.
+            </p>
+            <p>
+              В этом случае необходимо включить "simultaneous" мод, он поможет
+              увидеть наложения задач.
+            </p>
+          </div>
+        </div>
       </div>
     );
   }

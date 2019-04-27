@@ -1,4 +1,5 @@
 import Task from './Task';
+import moment from 'moment';
 
 const HOURS_IN_DAY = 24;
 const MAX_TOTAL = 60; // minutes in hour
@@ -6,6 +7,7 @@ const MAX_TOTAL = 60; // minutes in hour
 class DataItem {
   constructor({ name }) {
     this.name = name;
+    // We would like to use Total item to make sure each task
     this.total = 0;
   }
 
@@ -23,47 +25,115 @@ class DataItem {
 }
 
 export default class DataItems {
-  constructor(tasks) {
+  constructor(tasks = []) {
+    this.tasks = tasks;
     this.data = [];
 
     // build basic data array
     for (let i = 0; i < HOURS_IN_DAY; i++) {
-      this.data.push(new DataItem({ name: i }));
+      const name = moment
+        .utc()
+        .hours(i)
+        .minutes(0)
+        .format('HH:mm');
+      this.data.push(new DataItem({ name }));
     }
+  }
 
-    tasks.forEach(item => {
+  /**
+   * The simpleData getter returns data object for BarChart.
+   * This function is support real life case when only one task could be at the same time
+   * @returns {*[]}
+   */
+  get getData() {
+    let simpleData = [].concat(this.data);
+
+    this.tasks.forEach(item => {
       const task = new Task(item);
       const startHours = task.startHours;
       const spentHours = task.spent('hours');
       let spent = task.spent('minutes');
 
       for (let index = 0; index <= spentHours; index++) {
-        // We want to access data item by index in array instead of loop through the object to find required dataItem
-        // that's why index decrement by 1
-        let targetHour = startHours + index - 1;
+        let targetHour = startHours + index;
 
         // We have to cover case when target hour doesn't exist,
         // it means task pass to the new day, so reduce hours by 24
         targetHour -= targetHour >= HOURS_IN_DAY ? HOURS_IN_DAY : 0;
 
-        let dataItem = this.data[targetHour];
+        let dataItem = simpleData[targetHour];
         let available = Number(MAX_TOTAL - dataItem.getTotal);
 
         if (available <= 0) {
-          // Meaning there is no any empty time slots.
-          // This could happen when there are a lot of paralel tasks or different task in different days
-          // This part of code doesn't support it, do something later
-          // debugger;
+          // Actually, this case should never happen in real life because there is only one task at the same time.
+          // Skip this task at all
+          return;
         } else if (available <= spent) {
           dataItem.setTotal(MAX_TOTAL);
 
           dataItem.setItem(task.name, available);
-          dataItem.setItem(task.id, available);
+          spent = Number(spent - available);
         } else {
           dataItem.setTotal(dataItem.getTotal + spent);
           dataItem.setItem(task.name, spent);
         }
       }
     });
+
+    return simpleData;
+  }
+
+  /**
+   * The getSimultaneousData getter based on the 'simpleData' getter with ability to support simultaneous tasks (several tasks at the same time),
+   * The 'simultaneous' feature required only for Random Generator feature
+   * Check TaskChart.jsx for details
+   * @returns {*[]}
+   */
+  get getSimultaneousData() {
+    let getSimultaneousData = [].concat(this.data);
+
+    this.tasks.forEach(item => {
+      const task = new Task(item);
+      const startHours = task.startHours;
+      const spentHours = task.spent('hours');
+      let spent = task.spent('minutes');
+
+      // addition variable for simultaneous tasks
+      let simultaneous = false;
+
+      for (let index = 0; index <= spentHours; index++) {
+        let targetHour = startHours + index;
+
+        // We have to cover case when target hour doesn't exist,
+        // it means task pass to the new day, so reduce hours by 24
+        targetHour -= targetHour >= HOURS_IN_DAY ? HOURS_IN_DAY : 0;
+
+        let dataItem = getSimultaneousData[targetHour];
+        let available = Number(MAX_TOTAL - dataItem.getTotal);
+
+        // Here is additional check for simultaneous tasks
+        if (available <= 0 || simultaneous) {
+          // Here is required code for simultaneous tasks
+          simultaneous = true;
+          if (spent >= MAX_TOTAL) {
+            dataItem.setItem(task.name, MAX_TOTAL);
+            spent = Number(spent - MAX_TOTAL);
+          } else {
+            dataItem.setItem(task.name, spent);
+            simultaneous = false;
+          }
+        } else if (available <= spent) {
+          dataItem.setTotal(MAX_TOTAL);
+
+          dataItem.setItem(task.name, available);
+          spent = Number(spent - available);
+        } else {
+          dataItem.setTotal(dataItem.getTotal + spent);
+          dataItem.setItem(task.name, spent);
+        }
+      }
+    });
+
+    return getSimultaneousData;
   }
 }
