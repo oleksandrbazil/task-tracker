@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
-import TaskNotFound from '../components/TaskNotFound';
-import Task from '../classes/Task';
+import TaskNotFound from '../TaskNotFound';
+import Task from '../../classes/Task';
 
 const styles = theme => ({
   container: {
@@ -19,7 +19,7 @@ const styles = theme => ({
   },
 });
 
-export const TaskInfo = ({
+export const Index = ({
   classes,
   tasks,
   match: {
@@ -86,4 +86,4 @@ export const TaskInfo = ({
 const mapStateToProps = (state, ownProps) => ({
   tasks: state.tasks.list,
 });
-export default withStyles(styles)(connect(mapStateToProps)(TaskInfo));
+export default withStyles(styles)(connect(mapStateToProps)(Index));

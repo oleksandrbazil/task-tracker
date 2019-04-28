@@ -1,5 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { generateTasks } from '../../actions/tasks';
 import {
   BarChart,
   ResponsiveContainer,
@@ -10,10 +12,10 @@ import {
   Legend,
   Bar,
 } from 'recharts';
-import DataItems from '../classes/DataItems';
-import TaskGenerator from './TaskGenerator';
+import DataItems from '../../classes/DataItems';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Button from '@material-ui/core/Button';
 
 const generateColor = () => {
   return (
@@ -24,7 +26,7 @@ const generateColor = () => {
   );
 };
 
-class TasksChart extends React.Component {
+class Index extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -34,7 +36,7 @@ class TasksChart extends React.Component {
 
   render() {
     const { simultaneous } = this.state;
-    const { tasks } = this.props;
+    const { tasks, generateTasks } = this.props;
     const dataItems = new DataItems(tasks);
     const data = simultaneous
       ? dataItems.getSimultaneousData
@@ -60,7 +62,9 @@ class TasksChart extends React.Component {
           </BarChart>
         </ResponsiveContainer>
         <div>
-          <TaskGenerator />
+          <Button style={{ float: 'right' }} onClick={() => generateTasks()}>
+            GENERATE
+          </Button>
           <FormControlLabel
             control={
               <Checkbox
@@ -97,4 +101,16 @@ class TasksChart extends React.Component {
 const mapStateToProps = state => ({
   tasks: state.tasks.list,
 });
-export default connect(mapStateToProps)(TasksChart);
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      generateTasks,
+    },
+    dispatch
+  );
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Index);

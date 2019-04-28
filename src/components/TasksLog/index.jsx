@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Task from '../classes/Task';
-import { removeTask } from '../actions/tasks';
+import Task from '../../classes/Task';
+import { removeTask } from '../../actions/tasks';
 import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -18,7 +18,7 @@ const styles = theme => ({
   },
 });
 
-const TasksLog = ({ list, removeTask, classes }) => {
+const Index = ({ list, removeTask, classes }) => {
   return (
     <div>
       <Table>
@@ -76,5 +76,5 @@ export default withStyles(styles)(
   connect(
     mapStateToProps,
     mapDispatchToProps
-  )(TasksLog)
+  )(Index)
 );

@@ -1,6 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import Task from '../classes/Task';
+import Task from '../../classes/Task';
 
 const initialState = {
   end: '',

@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { closeModal } from '../actions/modal';
+import { closeModal } from '../../actions/modal';
 import { withStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
@@ -24,7 +24,7 @@ const styles = theme => ({
   },
 });
 
-const ModalMessage = ({ classes, isOpen, title, message, closeModal }) => {
+const Index = ({ classes, isOpen, title, message, closeModal }) => {
   return (
     <div>
       <Modal open={isOpen} onClose={() => closeModal()}>
@@ -60,5 +60,5 @@ export default withStyles(styles)(
   connect(
     mapStateToProps,
     mapDispatchToProps
-  )(ModalMessage)
+  )(Index)
 );
