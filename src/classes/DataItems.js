@@ -1,4 +1,3 @@
-import Task from './Task';
 import moment from 'moment';
 
 const HOURS_IN_DAY = 24;
@@ -48,11 +47,12 @@ export default class DataItems {
   get getData() {
     let simpleData = [].concat(this.data);
 
-    this.tasks.forEach(item => {
-      const task = new Task(item);
-      const startHours = task.startHours;
-      const spentHours = task.spent('hours');
-      let spent = task.spent('minutes');
+    this.tasks.forEach(task => {
+      const startedAt = moment(task.start);
+      const finishedAt = moment(task.end);
+      const startHours = moment(startedAt).hours();
+      const spentHours = finishedAt.diff(startedAt, 'hours');
+      let spent = finishedAt.diff(startedAt, 'minutes');
 
       for (let index = 0; index <= spentHours; index++) {
         let targetHour = startHours + index;
@@ -92,11 +92,12 @@ export default class DataItems {
   get getSimultaneousData() {
     let getSimultaneousData = [].concat(this.data);
 
-    this.tasks.forEach(item => {
-      const task = new Task(item);
-      const startHours = task.startHours;
-      const spentHours = task.spent('hours');
-      let spent = task.spent('minutes');
+    this.tasks.forEach(task => {
+      const startedAt = moment(task.start);
+      const finishedAt = moment(task.end);
+      const startHours = moment(startedAt).hours();
+      const spentHours = finishedAt.diff(startedAt, 'hours');
+      let spent = finishedAt.diff(startedAt, 'minutes');
 
       // addition variable for simultaneous tasks
       let simultaneous = false;

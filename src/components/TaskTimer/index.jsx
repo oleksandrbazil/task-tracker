@@ -1,6 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import Task from '../../classes/Task';
+import Time from '../Time';
 
 const initialState = {
   end: '',
@@ -66,10 +66,9 @@ class TaskTimer extends React.Component {
     // That's why we get 'start' when 'end' from state
     const { classes, start } = this.props;
     const { end } = this.state;
-    const taskItem = new Task({ start, end });
     return (
       <div className={classes.root}>
-        <div>{taskItem.timeSpent}</div>
+        <Time datetime={start} secondDatetime={end} diff />
       </div>
     );
   }
