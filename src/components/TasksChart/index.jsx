@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { generateTasks } from '../../actions/tasks';
+import { buildData } from '../../utilities';
 import {
   BarChart,
   ResponsiveContainer,
@@ -12,7 +13,6 @@ import {
   Legend,
   Bar,
 } from 'recharts';
-import DataItems from '../../classes/DataItems';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Button from '@material-ui/core/Button';
@@ -37,10 +37,7 @@ class Index extends React.Component {
   render() {
     const { simultaneous } = this.state;
     const { tasks, generateTasks } = this.props;
-    const dataItems = new DataItems(tasks);
-    const data = simultaneous
-      ? dataItems.getSimultaneousData
-      : dataItems.getData;
+    const data = buildData(tasks, simultaneous);
 
     return (
       <div ref={this.rootEl}>
@@ -88,8 +85,9 @@ class Index extends React.Component {
               создать ситуацию при которой 2 задачи выполняються одновременно.
             </p>
             <p>
-              В этом случае необходимо включить "simultaneous" мод, он поможет
-              увидеть наложения задач.
+              В этом случае задача которая накладываеться на другую задачу не
+              будет показана на графике, для того что бы увидеть такую задачу
+              нужно переключиться в "simultaneous" мод.
             </p>
           </div>
         </div>
