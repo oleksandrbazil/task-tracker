@@ -68,7 +68,7 @@ class TaskTimer extends React.Component {
     const { end } = this.state;
     return (
       <div className={classes.root}>
-        <Time datetime={start} secondDatetime={end} diff />
+        <Time datetimeDiff={{ start, end }} />
       </div>
     );
   }

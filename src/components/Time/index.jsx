@@ -2,14 +2,22 @@ import React from 'react';
 import moment from 'moment';
 
 const TIME_FORMAT = 'HH:mm:ss';
+export const TIME_PLACEHOLDER = '00:00:00';
+export const TIME_TEST_ID = 'time';
 
-const Time = ({ datetime, secondDatetime, diff }) => {
-  let timeString = '00:00:00';
+const defaultDateTimeDiff = {
+  start: '',
+  end: '',
+};
 
-  if (diff) {
-    // We have to calculate difference between two datetimes and show time in required time format
-    const start = moment(datetime);
-    const finish = moment(secondDatetime);
+const Time = ({ datetime, secondDatetime, datetimeDiff }) => {
+  let timeString = TIME_PLACEHOLDER;
+
+  if (datetimeDiff && datetimeDiff !== defaultDateTimeDiff) {
+    // We have to calculate difference between two datetime and show time in required time format
+    const { start: startDatetime, end: finishDatetime } = datetimeDiff;
+    const start = moment(startDatetime);
+    const finish = moment(finishDatetime);
     if (start.isValid() && finish.isValid()) {
       timeString = moment.utc(finish.diff(start)).format(TIME_FORMAT);
     }
@@ -21,11 +29,12 @@ const Time = ({ datetime, secondDatetime, diff }) => {
     }
   }
 
-  return <>{timeString}</>;
+  return <span data-testid={TIME_TEST_ID}>{timeString}</span>;
 };
 
 Time.defaultProps = {
-  diff: false,
+  datetime: '',
+  datetimeDiff: defaultDateTimeDiff,
 };
 
 export default Time;

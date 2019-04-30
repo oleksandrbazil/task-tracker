@@ -47,7 +47,7 @@ const Index = ({ list, removeTask, classes }) => {
                   <Time datetime={end} />
                 </TableCell>
                 <TableCell>
-                  <Time datetime={start} secondDatetime={end} diff />
+                  <Time datetimeDiff={{ start, end }} />
                 </TableCell>
                 <TableCell>
                   <Button component={Link} to={`/tasks/${id}`}>

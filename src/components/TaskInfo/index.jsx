@@ -82,7 +82,7 @@ export const Index = ({
         <FormControl className={classes.formControl}>
           <FormLabel>
             <span>Spent: </span>
-            <Time datetime={start} secondDatetime={end} diff />
+            <Time datetimeDiff={{ start, end }} />
           </FormLabel>
         </FormControl>
       </form>
