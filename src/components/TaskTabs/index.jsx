@@ -3,10 +3,10 @@ import { withRouter } from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import TasksLog from './TasksLog';
-import TasksChart from './TasksChart';
+import TasksLog from '../TasksLog';
+import TasksChart from '../TasksChart';
 
-class TaskTabs extends React.Component {
+class Index extends React.Component {
   handleChangeTab(event, value) {
     this.props.history.push(value);
   }
@@ -47,4 +47,4 @@ class TaskTabs extends React.Component {
   }
 }
 
-export default withRouter(TaskTabs);
+export default withRouter(Index);

@@ -92,13 +92,13 @@ function* generateTasks() {
 
   const numberOfTasks = getRandomInt(MIN_TASKS, MAX_TASKS);
 
-  for (let i = 0; i <= numberOfTasks; i++) {
-    const start = getRandomInt(today.getTime(), tomorrow.getTime());
+  for (let i = 1; i < numberOfTasks; i++) {
+    const start = getRandomInt(today.valueOf(), tomorrow.valueOf());
     const finish = new Date(start);
     const name = `Random task #${i}`;
     const end = getRandomInt(
-      finish.setMinutes(finish.getMinutes() + MIN_DURATION),
-      finish.setMinutes(finish.getMinutes() + MAX_DURATION)
+      finish.setMinutes(finish.getMinutes() + MIN_DURATION).valueOf(),
+      finish.setMinutes(finish.getMinutes() + MAX_DURATION).valueOf()
     );
 
     yield put({

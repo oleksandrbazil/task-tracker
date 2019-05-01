@@ -1,5 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { generateTasks } from '../../actions/tasks';
+import buildData from '../../utilities/buildData';
 import {
   BarChart,
   ResponsiveContainer,
@@ -10,35 +13,48 @@ import {
   Legend,
   Bar,
 } from 'recharts';
-import DataItems from '../classes/DataItems';
-import TaskGenerator from './TaskGenerator';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Button from '@material-ui/core/Button';
 
-const generateColor = () => {
-  return (
-    '#' +
-    Math.random()
-      .toString(16)
-      .substr(-6)
-  );
-};
-
-class TasksChart extends React.Component {
+class Index extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      simultaneous: false,
+      overlayMode: false,
+      data: [],
+      bars: [],
     };
   }
 
-  render() {
-    const { simultaneous } = this.state;
+  componentDidMount() {
+    this.rebuildData();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.tasks !== this.props.tasks) {
+      this.rebuildData();
+    }
+  }
+
+  toggleOverlayMode() {
+    const { overlayMode } = this.state;
+    this.setState({ overlayMode: !overlayMode }, () => this.rebuildData());
+  }
+
+  rebuildData() {
+    const { overlayMode } = this.state;
     const { tasks } = this.props;
-    const dataItems = new DataItems(tasks);
-    const data = simultaneous
-      ? dataItems.getSimultaneousData
-      : dataItems.getData;
+    const { data, bars } = buildData(tasks, overlayMode);
+    this.setState({
+      data,
+      bars,
+    });
+  }
+
+  render() {
+    const { overlayMode, data, bars } = this.state;
+    const { generateTasks } = this.props;
 
     return (
       <div ref={this.rootEl}>
@@ -49,28 +65,23 @@ class TasksChart extends React.Component {
             <YAxis />
             <Tooltip />
             <Legend legendType="circle" />
-            {tasks.map(task => (
-              <Bar
-                key={task.id}
-                dataKey={task.name}
-                stackId={!simultaneous ? `taskOneByOne` : null}
-                fill={generateColor()}
-              />
+            {bars.map(({ id, stackId, fill }) => (
+              <Bar key={id} dataKey={id} stackId={stackId} fill={fill} />
             ))}
           </BarChart>
         </ResponsiveContainer>
         <div>
-          <TaskGenerator />
+          <Button style={{ float: 'right' }} onClick={() => generateTasks()}>
+            GENERATE
+          </Button>
           <FormControlLabel
             control={
               <Checkbox
-                checked={simultaneous}
-                onChange={() => {
-                  this.setState({ simultaneous: !simultaneous });
-                }}
+                checked={overlayMode}
+                onChange={() => this.toggleOverlayMode()}
               />
             }
-            label={'Simultaneous tasks'}
+            label={'OVERLAY mode'}
           />
           <div style={{ maxWidth: '700px' }}>
             <p>
@@ -84,8 +95,9 @@ class TasksChart extends React.Component {
               создать ситуацию при которой 2 задачи выполняються одновременно.
             </p>
             <p>
-              В этом случае необходимо включить "simultaneous" мод, он поможет
-              увидеть наложения задач.
+              В этом случае задача которая накладываеться на другую задачу не
+              будет показана на графике, для того что бы увидеть такую задачу
+              нужно переключиться в "overlayMode" мод.
             </p>
           </div>
         </div>
@@ -97,4 +109,16 @@ class TasksChart extends React.Component {
 const mapStateToProps = state => ({
   tasks: state.tasks.list,
 });
-export default connect(mapStateToProps)(TasksChart);
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      generateTasks,
+    },
+    dispatch
+  );
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Index);
