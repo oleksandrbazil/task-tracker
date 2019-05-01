@@ -45,7 +45,7 @@ class Index extends React.Component {
     if (start) {
       finishTask({ callback: () => this.resetForm() });
     } else {
-      updateCurrentTask({ start: new Date().getTime() });
+      updateCurrentTask({ start: new Date().valueOf() });
     }
   }
   resetForm() {

@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { generateTasks } from '../../actions/tasks';
-import { buildData } from '../../utilities';
+import { buildData } from '../../utilities/buildData';
 import {
   BarChart,
   ResponsiveContainer,
@@ -30,14 +30,14 @@ class Index extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      simultaneous: false,
+      overlayMode: false,
     };
   }
 
   render() {
-    const { simultaneous } = this.state;
+    const { overlayMode } = this.state;
     const { tasks, generateTasks } = this.props;
-    const data = buildData(tasks, simultaneous);
+    const data = buildData(tasks, overlayMode);
 
     return (
       <div ref={this.rootEl}>
@@ -51,8 +51,8 @@ class Index extends React.Component {
             {tasks.map(task => (
               <Bar
                 key={task.id}
-                dataKey={task.name}
-                stackId={!simultaneous ? `taskOneByOne` : null}
+                dataKey={task.id}
+                stackId={!overlayMode ? `taskOneByOne` : null}
                 fill={generateColor()}
               />
             ))}
@@ -65,9 +65,9 @@ class Index extends React.Component {
           <FormControlLabel
             control={
               <Checkbox
-                checked={simultaneous}
+                checked={overlayMode}
                 onChange={() => {
-                  this.setState({ simultaneous: !simultaneous });
+                  this.setState({ overlayMode: !overlayMode });
                 }}
               />
             }
@@ -87,7 +87,7 @@ class Index extends React.Component {
             <p>
               В этом случае задача которая накладываеться на другую задачу не
               будет показана на графике, для того что бы увидеть такую задачу
-              нужно переключиться в "simultaneous" мод.
+              нужно переключиться в "overlayMode" мод.
             </p>
           </div>
         </div>
