@@ -1,12 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { updateCurrentTask, finishTask } from '../actions/tasks';
+import { updateCurrentTask, finishTask } from '../../actions/tasks';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
 import Input from '@material-ui/core/Input';
-import TaskTimer from './TaskTimer';
+import TaskTimer from '../TaskTimer';
 
 const initialState = {
   name: '',
@@ -24,7 +24,7 @@ const styles = theme => ({
   },
 });
 
-class TaskForm extends React.Component {
+class Index extends React.Component {
   constructor(props) {
     super(props);
     const { name } = this.props;
@@ -45,7 +45,7 @@ class TaskForm extends React.Component {
     if (start) {
       finishTask({ callback: () => this.resetForm() });
     } else {
-      updateCurrentTask({ start: new Date().getTime() });
+      updateCurrentTask({ start: new Date().valueOf() });
     }
   }
   resetForm() {
@@ -114,5 +114,5 @@ export default withStyles(styles)(
   connect(
     mapStateToProps,
     mapDispatchToProps
-  )(TaskForm)
+  )(Index)
 );

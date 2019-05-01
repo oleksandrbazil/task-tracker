@@ -20,7 +20,7 @@ export const updateCurrentTask = ({ name, start, end }) => {
 };
 
 export const finishTask = ({ callback }) => {
-  const end = new Date().getTime();
+  const end = new Date().valueOf();
   return {
     type: FINISH_CURRENT_TASK,
     payload: {

@@ -1,0 +1,96 @@
+import React from 'react';
+import { connect } from 'react-redux';
+import { withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import FormControl from '@material-ui/core/FormControl';
+import FormLabel from '@material-ui/core/FormLabel';
+import TextField from '@material-ui/core/TextField';
+import TaskNotFound from '../TaskNotFound';
+import Time from '../Time';
+
+const styles = theme => ({
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    flexWrap: 'wrap',
+  },
+  formControl: {
+    margin: theme.spacing.unit,
+    display: 'block',
+    width: 200,
+  },
+});
+
+export const Index = ({
+  classes,
+  tasks,
+  match: {
+    params: { taskId },
+  },
+}) => {
+  const task = tasks.find(t => t.id === parseInt(taskId));
+  if (!task) {
+    return <TaskNotFound />;
+  }
+  const { id, name, start, end } = task;
+
+  return (
+    <div>
+      <Typography variant="h4">Task Info</Typography>
+      <form className={classes.container}>
+        <FormControl className={classes.formControl}>
+          <TextField id="id" label="ID" type="text" value={id} disabled />
+        </FormControl>
+
+        <FormControl className={classes.formControl}>
+          <FormLabel>Name</FormLabel>
+          <TextField id="name" label="Name" type="text" value={name} />
+        </FormControl>
+
+        <FormControl className={classes.formControl}>
+          <FormLabel>
+            <span>Started At: </span>
+            <Time datetime={start} />
+          </FormLabel>
+          <TextField
+            id="start"
+            label="TimeStart"
+            type="text"
+            value={task.start}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+        </FormControl>
+
+        <FormControl className={classes.formControl}>
+          <FormLabel>
+            <span>Finished At: </span>
+            <Time datetime={end} />
+          </FormLabel>
+          <TextField
+            id="end"
+            label="TimeEnd"
+            type="text"
+            value={task.end}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+        </FormControl>
+
+        <FormControl className={classes.formControl}>
+          <FormLabel>
+            <span>Spent: </span>
+            <Time datetimeDiff={{ start, end }} />
+          </FormLabel>
+        </FormControl>
+      </form>
+    </div>
+  );
+};
+
+const mapStateToProps = (state, ownProps) => ({
+  tasks: state.tasks.list,
+});
+export default withStyles(styles)(connect(mapStateToProps)(Index));

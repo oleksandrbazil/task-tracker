@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Task from '../classes/Task';
-import { removeTask } from '../actions/tasks';
+import { removeTask } from '../../actions/tasks';
 import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
+import Time from '../Time';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -18,7 +18,7 @@ const styles = theme => ({
   },
 });
 
-const TasksLog = ({ list, removeTask, classes }) => {
+const Index = ({ list, removeTask, classes }) => {
   return (
     <div>
       <Table>
@@ -33,16 +33,22 @@ const TasksLog = ({ list, removeTask, classes }) => {
             <TableCell>Delete</TableCell>
           </TableRow>
         </TableHead>
-        <TableBody className={classes.tableBody}>
+        <TableBody>
           {list.map((item, index) => {
-            const { id, name, timeStart, timeEnd, timeSpent } = new Task(item);
+            const { id, name, start, end } = item;
             return (
               <TableRow key={`row${index}`}>
                 <TableCell>{id}</TableCell>
                 <TableCell>{name}</TableCell>
-                <TableCell>{timeStart}</TableCell>
-                <TableCell>{timeEnd}</TableCell>
-                <TableCell>{timeSpent}</TableCell>
+                <TableCell>
+                  <Time datetime={start} />
+                </TableCell>
+                <TableCell>
+                  <Time datetime={end} />
+                </TableCell>
+                <TableCell>
+                  <Time datetimeDiff={{ start, end }} />
+                </TableCell>
                 <TableCell>
                   <Button component={Link} to={`/tasks/${id}`}>
                     Info
@@ -76,5 +82,5 @@ export default withStyles(styles)(
   connect(
     mapStateToProps,
     mapDispatchToProps
-  )(TasksLog)
+  )(Index)
 );
