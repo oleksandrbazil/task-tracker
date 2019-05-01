@@ -1,4 +1,4 @@
-import { buildData, HOURS_IN_DAY } from './buildData';
+import buildData, { HOURS_IN_DAY } from './buildData';
 
 const today = new Date();
 today.setHours(0);
@@ -55,7 +55,7 @@ const tasks = [task1, task2, task3, task4, task5, task6];
 
 describe('buildData', () => {
   it('should returns array with 24 hour slots', () => {
-    const data = buildData();
+    const { data } = buildData();
     expect(data.length).toBe(HOURS_IN_DAY);
   });
 
@@ -63,7 +63,7 @@ describe('buildData', () => {
     // We want to prevent showing tasks with overlay time spent in DEFAULT mode (OVERLAY=FALSE).
     // According to the testing data: Task 2 is overlay Task 1 for a 10 minutes
     // So we expect this task will be excluded from all timeSlots
-    const data = buildData(tasks);
+    const { data } = buildData(tasks);
     const taskSlot1 = data.find(item => item.name === '10:00');
 
     expect(Number(taskSlot1[task2.id])).toBe(NaN);
@@ -72,7 +72,7 @@ describe('buildData', () => {
   it('should show Overlay Tasks in OVERLAY MODE', () => {
     // We would like to show tasks with overlay time spent in OVERLAY mode (OVERLAY=TRUE).
     // So we expect to see spent time of task 2 in timeSlots
-    const data = buildData(tasks, true);
+    const { data } = buildData(tasks, true);
     const taskSlot1 = data.find(item => item.name === '10:00');
     const taskSlot2 = data.find(item => item.name === '11:00');
 
@@ -83,7 +83,7 @@ describe('buildData', () => {
   it('should show Spent Time in all time slots', () => {
     // Task 3 should be in 4 time slots 12:00, 13:00, 14:00, 15:00
     const taskId = task3.id;
-    const data = buildData(tasks);
+    const { data } = buildData(tasks);
     const taskSlot1 = data.find(item => item.name === '12:00');
     const taskSlot2 = data.find(item => item.name === '13:00');
     const taskSlot3 = data.find(item => item.name === '14:00');
@@ -98,7 +98,7 @@ describe('buildData', () => {
   it('should show Spent Time across two days', () => {
     // Task 4 should be in 3 time slots 22:00, 23:00 and 00:00
     const taskId = task4.id;
-    const data = buildData(tasks);
+    const { data } = buildData(tasks);
     const taskSlot1 = data.find(item => item.name === '22:00');
     const taskSlot2 = data.find(item => item.name === '23:00');
     const taskSlot3 = data.find(item => item.name === '00:00');
@@ -108,7 +108,7 @@ describe('buildData', () => {
     expect(Number(taskSlot3[taskId])).toBe(30);
   });
   it('should show Sent Time independently of task sorting', () => {
-    const data = buildData(tasks);
+    const { data } = buildData(tasks);
     const taskSlot1 = data.find(item => item.name === '22:00');
 
     expect(Number(taskSlot1[task6.id])).toBe(30);

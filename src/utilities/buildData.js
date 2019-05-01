@@ -3,6 +3,16 @@ import moment from 'moment';
 export const HOURS_IN_DAY = 24;
 const MILLISECONDS_IN_MINUTE = 60 * 1000;
 
+class BarItem {
+  constructor({ id, stackId }) {
+    this.id = id;
+    this.stackId = stackId ? 'allInOne' : null;
+    this.fill = `#${Math.random()
+      .toString(16)
+      .substr(-6)}`;
+  }
+}
+
 // Use Class to make sure all props will be accessible and task spent time will be saved correctly
 class TimeSlot {
   constructor({ hours }) {
@@ -42,14 +52,17 @@ class TimeSlot {
  * buildData function is help to build required data array for ReCharts feature.
  * @param tasks - array of tasks with props {id,name,start,end}
  * @param overlayMode - Boolean.
- * @returns {Array}
+ * @returns {Object} with data and bars arrays
  */
 export const buildData = (tasks = [], overlayMode = false) => {
-  let data = [];
+  let returnData = {
+    data: [],
+    bars: [],
+  };
 
   // 1. Build basic data array with 24 items for each hour
   for (let hours = 0; hours < HOURS_IN_DAY; hours++) {
-    data.push(new TimeSlot({ hours }));
+    returnData.data.push(new TimeSlot({ hours }));
   }
 
   // 2. Loop trough the task array
@@ -94,7 +107,7 @@ export const buildData = (tasks = [], overlayMode = false) => {
         .minutes(0)
         .format('HH:mm');
 
-      let slot = data.find(slot => slot.name === taskSlotName);
+      let slot = returnData.data.find(slot => slot.name === taskSlotName);
 
       // Skip Current Task if TimeSlot is not found. Should never happen
       if (!slot) {
@@ -157,9 +170,12 @@ export const buildData = (tasks = [], overlayMode = false) => {
       // Finally, add task item
       slot.addSpentTime(id, spentMilliseconds);
     }
+
+    // Add task item into bar array. If it's DEFAULT mode we would like to show all TimeSlot spent time in one Bar
+    returnData.bars.push(new BarItem({ id, stackId: !overlayMode }));
   });
 
-  return data;
+  return returnData;
 };
 
 export default buildData;

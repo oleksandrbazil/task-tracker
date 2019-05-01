@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { generateTasks } from '../../actions/tasks';
-import { buildData } from '../../utilities/buildData';
+import buildData from '../../utilities/buildData';
 import {
   BarChart,
   ResponsiveContainer,
@@ -17,27 +17,44 @@ import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Button from '@material-ui/core/Button';
 
-const generateColor = () => {
-  return (
-    '#' +
-    Math.random()
-      .toString(16)
-      .substr(-6)
-  );
-};
-
 class Index extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       overlayMode: false,
+      data: [],
+      bars: [],
     };
   }
 
-  render() {
+  componentDidMount() {
+    this.rebuildData();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.tasks !== this.props.tasks) {
+      this.rebuildData();
+    }
+  }
+
+  toggleOverlayMode() {
     const { overlayMode } = this.state;
-    const { tasks, generateTasks } = this.props;
-    const data = buildData(tasks, overlayMode);
+    this.setState({ overlayMode: !overlayMode }, () => this.rebuildData());
+  }
+
+  rebuildData() {
+    const { overlayMode } = this.state;
+    const { tasks } = this.props;
+    const { data, bars } = buildData(tasks, overlayMode);
+    this.setState({
+      data,
+      bars,
+    });
+  }
+
+  render() {
+    const { overlayMode, data, bars } = this.state;
+    const { generateTasks } = this.props;
 
     return (
       <div ref={this.rootEl}>
@@ -48,13 +65,8 @@ class Index extends React.Component {
             <YAxis />
             <Tooltip />
             <Legend legendType="circle" />
-            {tasks.map(task => (
-              <Bar
-                key={task.id}
-                dataKey={task.id}
-                stackId={!overlayMode ? `taskOneByOne` : null}
-                fill={generateColor()}
-              />
+            {bars.map(({ id, stackId, fill }) => (
+              <Bar key={id} dataKey={id} stackId={stackId} fill={fill} />
             ))}
           </BarChart>
         </ResponsiveContainer>
@@ -66,12 +78,10 @@ class Index extends React.Component {
             control={
               <Checkbox
                 checked={overlayMode}
-                onChange={() => {
-                  this.setState({ overlayMode: !overlayMode });
-                }}
+                onChange={() => this.toggleOverlayMode()}
               />
             }
-            label={'Simultaneous tasks'}
+            label={'OVERLAY mode'}
           />
           <div style={{ maxWidth: '700px' }}>
             <p>
