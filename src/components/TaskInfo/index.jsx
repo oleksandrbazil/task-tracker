@@ -21,14 +21,7 @@ const styles = theme => ({
   },
 });
 
-export const Index = ({
-  classes,
-  tasks,
-  match: {
-    params: { taskId },
-  },
-}) => {
-  const task = tasks.find(t => t.id === parseInt(taskId));
+export const Index = ({ classes, task }) => {
   if (!task) {
     return <TaskNotFound />;
   }
@@ -90,7 +83,16 @@ export const Index = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  tasks: state.tasks,
-});
+const mapStateToProps = (
+  state,
+  {
+    match: {
+      params: { taskId },
+    },
+  }
+) => {
+  return {
+    task: state.tasks.find(task => task.id === parseInt(taskId)),
+  };
+};
 export default withStyles(styles)(connect(mapStateToProps)(Index));
