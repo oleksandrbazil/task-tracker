@@ -63,8 +63,8 @@ class Index extends React.Component {
         <ResponsiveContainer width="100%" height={600}>
           <BarChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" domain={[0, 60]} />
-            <YAxis />
+            <XAxis dataKey="name" />
+            <YAxis domain={[0, 60]} />
             <Tooltip />
             <Legend legendType="circle" />
             {bars.map(({ id, stackId, fill }) => (
