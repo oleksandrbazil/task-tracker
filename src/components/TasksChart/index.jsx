@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { generateTasks } from '../../redux/modules/tasks';
-import buildData from '../../utilities/buildData';
+import buildChartData from '../../utilities/buildChartData';
 import {
   BarChart,
   ResponsiveContainer,
@@ -45,7 +45,7 @@ class Index extends React.Component {
   rebuildData() {
     const { overlayMode } = this.state;
     const { tasks } = this.props;
-    const { data, bars } = buildData(tasks, overlayMode);
+    const { data, bars } = buildChartData(tasks, overlayMode);
     this.setState({
       data,
       bars,

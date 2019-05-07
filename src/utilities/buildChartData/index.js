@@ -49,12 +49,12 @@ class TimeSlot {
 }
 
 /**
- * buildData function is help to build required data array for ReCharts feature.
+ * buildChartData function is help to build required data array for ReCharts feature.
  * @param tasks - array of tasks with props {id,name,start,end}
  * @param overlayMode - Boolean.
  * @returns {Object} with data and bars arrays
  */
-export const buildData = (tasks = [], overlayMode = false) => {
+export const buildChartData = (tasks = [], overlayMode = false) => {
   let returnData = {
     data: [],
     bars: [],
@@ -178,4 +178,4 @@ export const buildData = (tasks = [], overlayMode = false) => {
   return returnData;
 };
 
-export default buildData;
+export default buildChartData;
