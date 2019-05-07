@@ -1,5 +1,5 @@
 import React from 'react';
-import AppRoutes from './routes';
+import AppRoutes from './pages/AppRoutes';
 import Grid from '@material-ui/core/Grid';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import theme from './theme';
