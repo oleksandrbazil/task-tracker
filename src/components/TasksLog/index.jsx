@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { removeTask } from '../../redux/modules/tasks';
 import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
-import Time from '../Time';
+import { prettyTime, prettyTimeDiff } from '../../utilities/prettyTime';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -40,15 +40,9 @@ const Index = ({ tasks, removeTask, classes }) => {
               <TableRow key={`row${index}`}>
                 <TableCell>{id}</TableCell>
                 <TableCell>{name}</TableCell>
-                <TableCell>
-                  <Time datetime={start} />
-                </TableCell>
-                <TableCell>
-                  <Time datetime={end} />
-                </TableCell>
-                <TableCell>
-                  <Time datetimeDiff={{ start, end }} />
-                </TableCell>
+                <TableCell>{prettyTime(start)}</TableCell>
+                <TableCell>{prettyTime(end)}</TableCell>
+                <TableCell>{prettyTimeDiff(start, end)}</TableCell>
                 <TableCell>
                   <Button component={Link} to={`/tasks/${id}`}>
                     Info

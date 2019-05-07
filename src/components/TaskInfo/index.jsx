@@ -1,12 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { prettyTime, prettyTimeDiff } from '../../utilities/prettyTime';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import TextField from '@material-ui/core/TextField';
 import TaskNotFound from '../TaskNotFound';
-import Time from '../Time';
 
 const styles = theme => ({
   container: {
@@ -50,7 +50,7 @@ export const Index = ({
         <FormControl className={classes.formControl}>
           <FormLabel>
             <span>Started At: </span>
-            <Time datetime={start} />
+            {prettyTime(start)}
           </FormLabel>
           <TextField
             id="start"
@@ -66,7 +66,7 @@ export const Index = ({
         <FormControl className={classes.formControl}>
           <FormLabel>
             <span>Finished At: </span>
-            <Time datetime={end} />
+            {prettyTime(end)}
           </FormLabel>
           <TextField
             id="end"
@@ -82,7 +82,7 @@ export const Index = ({
         <FormControl className={classes.formControl}>
           <FormLabel>
             <span>Spent: </span>
-            <Time datetimeDiff={{ start, end }} />
+            {prettyTimeDiff(start, end)}
           </FormLabel>
         </FormControl>
       </form>
