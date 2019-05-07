@@ -9,7 +9,7 @@ it('renders without crashing', () => {
   const div = document.createElement('div');
   ReactDOM.render(
     <Provider store={store}>
-      <Router basename={process.env.PUBLIC_URL}>
+      <Router>
         <App />
       </Router>
     </Provider>,
