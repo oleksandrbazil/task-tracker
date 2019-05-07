@@ -68,7 +68,7 @@ function* addTask(action = {}) {
     });
 
     // reset component state
-    const { action: { callback } = {} } = action;
+    const { options: { callback } = {} } = action;
     if (typeof callback === 'function') {
       callback();
     }
