@@ -1,3 +1,5 @@
+import { put } from 'redux-saga/effects';
+
 // Action Types
 export const OPEN_MODAL = 'modal/OPEN_MODAL';
 export const CLOSE_MODAL = 'modal/CLOSE_MODAL';
@@ -31,3 +33,14 @@ export const closeModal = () => ({
     isOpen: false,
   },
 });
+
+// Redux Saga Workers
+export function* showModal(title = 'Error', message = null) {
+  yield put({
+    type: OPEN_MODAL,
+    payload: {
+      title: title,
+      message: message,
+    },
+  });
+}
