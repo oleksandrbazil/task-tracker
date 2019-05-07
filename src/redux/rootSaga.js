@@ -14,7 +14,7 @@ import {
   CLEAR_TASK,
 } from './modules/currentTask';
 import { saveState } from '../localStorage';
-import generate from '../utilities/taskGenerator';
+import { generateRandom } from '../utilities/taskGenerator';
 
 // Selectors
 const getTasksStore = state => {
@@ -83,13 +83,14 @@ function* addTask(action = {}) {
   }
 }
 
-function* generateTasks() {
+function* generateTasks(action = {}) {
   yield put({
     type: REMOVE_ALL_TASKS,
     payload: {},
   });
 
-  const tasks = generate();
+  const { options: { oneByOne } = {} } = action;
+  const tasks = generateRandom(oneByOne);
 
   yield put({
     type: IMPORT_TASKS,

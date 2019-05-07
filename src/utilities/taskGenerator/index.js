@@ -7,7 +7,12 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
-const generate = () => {
+/**
+ *
+ * @param oneByOne - boolean. Make possible generate random tasks one by one without delays
+ * @returns {Array}
+ */
+export const generateRandom = (oneByOne = false) => {
   let tasks = [];
   const now = new Date();
   const today = new Date(now.toLocaleDateString());
@@ -15,7 +20,17 @@ const generate = () => {
   const numberOfTasks = getRandomInt(MIN_TASKS, MAX_TASKS);
 
   for (let id = 1; id < numberOfTasks; id++) {
-    const start = getRandomInt(today.valueOf(), tomorrow.valueOf());
+    let start = getRandomInt(today.valueOf(), tomorrow.valueOf());
+    // if oneByOne mode we have to start new task right after previous one
+    if (oneByOne) {
+      const DELTA_ID = 2;
+      const prevTask = tasks[id - DELTA_ID];
+      if (typeof prevTask === 'object') {
+        // We have to setup start as end of previout task with 1 millisecond delay,
+        // cause we will check if any task is overlaying on another one
+        start = prevTask.end + 1;
+      }
+    }
     const finish = new Date(start);
     const name = `Random task #${id}`;
     const end = getRandomInt(
@@ -34,4 +49,4 @@ const generate = () => {
   return tasks;
 };
 
-export default generate;
+export default null;

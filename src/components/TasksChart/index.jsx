@@ -22,29 +22,31 @@ class Index extends React.Component {
     super(props);
     this.state = {
       overlayMode: false,
+      generateOneByOne: false,
       data: [],
       bars: [],
     };
   }
 
   componentDidMount() {
-    this.rebuildData();
+    const { tasks } = this.props;
+    this.rebuildData(tasks);
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.tasks !== this.props.tasks) {
-      this.rebuildData();
+      this.rebuildData(nextProps.tasks);
     }
   }
 
   toggleOverlayMode() {
     const { overlayMode } = this.state;
-    this.setState({ overlayMode: !overlayMode }, () => this.rebuildData());
+    const { tasks } = this.props;
+    this.setState({ overlayMode: !overlayMode }, () => this.rebuildData(tasks));
   }
 
-  rebuildData() {
+  rebuildData(tasks) {
     const { overlayMode } = this.state;
-    const { tasks } = this.props;
     const { data, bars } = buildChartData(tasks, overlayMode);
     this.setState({
       data,
@@ -53,7 +55,7 @@ class Index extends React.Component {
   }
 
   render() {
-    const { overlayMode, data, bars } = this.state;
+    const { overlayMode, data, bars, generateOneByOne } = this.state;
     const { generateTasks } = this.props;
 
     return (
@@ -71,9 +73,23 @@ class Index extends React.Component {
           </BarChart>
         </ResponsiveContainer>
         <div>
-          <Button style={{ float: 'right' }} onClick={() => generateTasks()}>
-            GENERATE
-          </Button>
+          <div style={{ float: 'right' }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={generateOneByOne}
+                  onChange={() =>
+                    this.setState({ generateOneByOne: !generateOneByOne })
+                  }
+                />
+              }
+              label={'generateOneByOne'}
+            />
+            <Button onClick={() => generateTasks(generateOneByOne)}>
+              GENERATE
+            </Button>
+          </div>
+
           <FormControlLabel
             control={
               <Checkbox

@@ -31,9 +31,12 @@ export const removeTask = ({ id }) => ({
   },
 });
 
-export const generateTasks = () => ({
+export const generateTasks = (oneByOne = false) => ({
   type: GENERATE_TASKS,
   payload: {},
+  options: {
+    oneByOne,
+  },
 });
 
 // side effects, only as applicable
