@@ -1,6 +1,6 @@
 import React from 'react';
+import { prettyTimeDiff } from '../../utilities/prettyTime';
 import { withStyles } from '@material-ui/core/styles';
-import Time from '../Time';
 
 const initialState = {
   end: '',
@@ -66,11 +66,7 @@ class TaskTimer extends React.Component {
     // That's why we get 'start' when 'end' from state
     const { classes, start } = this.props;
     const { end } = this.state;
-    return (
-      <div className={classes.root}>
-        <Time datetimeDiff={{ start, end }} />
-      </div>
-    );
+    return <div className={classes.root}>{prettyTimeDiff(start, end)}</div>;
   }
 }
 

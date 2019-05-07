@@ -1,3 +1,5 @@
+const storeItemKey = 'state';
+
 /**
  * Try to load state from localStorage
  * Do nothing if user disabled localStorage
@@ -5,7 +7,7 @@
  */
 export const loadState = () => {
   try {
-    const serializedState = localStorage.getItem('state');
+    const serializedState = localStorage.getItem(storeItemKey);
     if (serializedState === null) {
       return undefined;
     }
@@ -18,12 +20,12 @@ export const loadState = () => {
 /**
  * Try to save Redux store into localStorage.
  * This function doesn't cover case when user disabled localStorage
- * @param state
+ * @param state - object
  */
 export const saveState = state => {
   try {
     const serializedState = JSON.stringify(state);
-    localStorage.setItem('state', serializedState);
+    localStorage.setItem(storeItemKey, serializedState);
   } catch (e) {
     // do something
   }

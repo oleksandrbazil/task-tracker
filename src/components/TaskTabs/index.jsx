@@ -1,47 +1,65 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
+import { Switch, Route, withRouter } from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import TasksLog from '../TasksLog';
 import TasksChart from '../TasksChart';
+import tabs from './tabs';
+
+const components = {
+  default: TasksLog,
+  TasksLog: TasksLog,
+  TasksChart: TasksChart,
+};
 
 class Index extends React.Component {
   handleChangeTab(event, value) {
-    this.props.history.push(value);
+    event.preventDefault();
+    const {
+      history = {},
+      location: { pathname },
+    } = this.props;
+    if (pathname !== value) {
+      history.push(value);
+    }
   }
 
   render() {
     const {
-      history: {
-        location: { pathname, hash },
-      },
+      location: { pathname },
     } = this.props;
-
-    // define available tab routes
-    const tabRoutes = {
-      log: '/',
-      chart: '/#chart',
-    };
-
-    // Catch invalid tab routes
-    const currentTab =
-      pathname + hash === tabRoutes.chart ? tabRoutes.chart : tabRoutes.log;
 
     return (
       <div>
         <AppBar position="static">
           <Tabs
-            value={currentTab}
-            onChange={(event, value) => this.handleChangeTab(event, value)}
+            value={pathname}
+            onChange={(event, value) => {
+              this.handleChangeTab(event, value);
+            }}
             variant="fullWidth"
           >
-            <Tab label="Tasks Log" value={tabRoutes.log} fullWidth />
-            <Tab label="Tasks chart" value={tabRoutes.chart} fullWidth />
+            {tabs.map((item, index) => (
+              <Tab
+                key={`label_${index}`}
+                label={item.label}
+                value={item.path}
+                fullWidth
+              />
+            ))}
           </Tabs>
         </AppBar>
-        {currentTab === tabRoutes.log && <TasksLog />}
-        {currentTab === tabRoutes.chart && <TasksChart />}
+        <Switch>
+          {tabs.map((item, index) => (
+            <Route
+              key={`component_${index}`}
+              path={item.path}
+              exact
+              component={components[item.component] || components.default}
+            />
+          ))}
+        </Switch>
       </div>
     );
   }
