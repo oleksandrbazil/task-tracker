@@ -1,4 +1,6 @@
-import * as TYPES from '../actions/modal';
+// Action Types
+export const OPEN_MODAL = 'modal/OPEN_MODAL';
+export const CLOSE_MODAL = 'modal/CLOSE_MODAL';
 
 const initialState = {
   isOpen: false,
@@ -6,17 +8,26 @@ const initialState = {
   message: '',
 };
 
+// Reducer
 export default (state = initialState, action) => {
   switch (action.type) {
-    case TYPES.OPEN_MODAL:
+    case OPEN_MODAL:
       return {
         isOpen: true,
         title: action.payload.title,
         message: action.payload.message,
       };
-    case TYPES.CLOSE_MODAL:
+    case CLOSE_MODAL:
       return initialState;
     default:
       return state;
   }
 };
+
+// Action Creators
+export const closeModal = () => ({
+  type: CLOSE_MODAL,
+  payload: {
+    isOpen: false,
+  },
+});

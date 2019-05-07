@@ -1,11 +1,14 @@
-import { createStore, applyMiddleware, compose } from 'redux';
+import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 import createSagaMiddleware from 'redux-saga';
-import reducers from './reducers';
-import rootSaga from './sagas';
-import { loadState } from './localStorage';
+import rootSaga from './rootSaga';
+import { loadState } from '../localStorage';
+import currentTask from './modules/currentTask';
+import modal from './modules/modal';
+import tasks from './modules/tasks';
 
-const sagaMiddleware = createSagaMiddleware();
+const reducers = combineReducers({ currentTask, tasks, modal });
 const preloadedState = loadState();
+const sagaMiddleware = createSagaMiddleware();
 
 const enhancers = [];
 const devToolsExtension = window.__REDUX_DEVTOOLS_EXTENSION__;

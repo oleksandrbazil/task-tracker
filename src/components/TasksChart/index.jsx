@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { generateTasks } from '../../actions/tasks';
+import { generateTasks } from '../../redux/modules/tasks';
 import buildData from '../../utilities/buildData';
 import {
   BarChart,
@@ -107,7 +107,7 @@ class Index extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  tasks: state.tasks.list,
+  tasks: state.tasks,
 });
 
 const mapDispatchToProps = dispatch =>

@@ -91,6 +91,6 @@ export const Index = ({
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  tasks: state.tasks.list,
+  tasks: state.tasks,
 });
 export default withStyles(styles)(connect(mapStateToProps)(Index));

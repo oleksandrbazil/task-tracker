@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { removeTask } from '../../actions/tasks';
+import { removeTask } from '../../redux/modules/tasks';
 import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import Time from '../Time';
@@ -18,7 +18,7 @@ const styles = theme => ({
   },
 });
 
-const Index = ({ list, removeTask, classes }) => {
+const Index = ({ tasks, removeTask, classes }) => {
   return (
     <div>
       <Table>
@@ -34,7 +34,7 @@ const Index = ({ list, removeTask, classes }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {list.map((item, index) => {
+          {tasks.map((item, index) => {
             const { id, name, start, end } = item;
             return (
               <TableRow key={`row${index}`}>
@@ -72,7 +72,7 @@ const Index = ({ list, removeTask, classes }) => {
 };
 
 const mapStateToProps = state => ({
-  list: state.tasks.list,
+  tasks: state.tasks,
 });
 
 const mapDispatchToProps = dispatch =>

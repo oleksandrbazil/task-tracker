@@ -2,31 +2,41 @@ import { all, select, takeLatest, takeEvery, put } from 'redux-saga/effects';
 import {
   ADD_TASK,
   REMOVE_TASK,
-  UPDATE_CURRENT_TASK,
-  FINISH_CURRENT_TASK,
-  RESET_CURRENT_TASK,
   REMOVE_ALL_TASKS,
   GENERATE_TASKS,
-} from '../actions/tasks';
-import { OPEN_MODAL } from '../actions/modal';
+} from './modules/tasks';
+import { OPEN_MODAL } from './modules/modal';
+import {
+  START_TASK,
+  UPDATE_TASK,
+  FINISH_TASK,
+  CLEAR_TASK,
+} from './modules/currentTask';
 import { saveState } from '../localStorage';
 
 // Selectors
-const getTasksStore = state => state.tasks;
+const getTasksStore = state => {
+  return state.tasks;
+};
+const getCurrentTaskStore = state => {
+  return state.currentTask;
+};
 
 // Workers
 function* saveStateToLocalStorage() {
   const tasks = yield select(getTasksStore);
-  saveState({ tasks });
+  const currentTask = yield select(getCurrentTaskStore);
+  saveState({ tasks, currentTask });
 }
 
 function* addTask(action = {}) {
-  const { list, current } = yield select(getTasksStore);
+  const tasks = yield select(getTasksStore);
+  const task = yield select(getCurrentTaskStore);
 
   try {
     // check if any key has empty value
-    Object.keys(current).forEach(key => {
-      if (!current[key]) {
+    Object.keys(task).forEach(key => {
+      if (!task[key]) {
         let message;
         if (key) {
           message = `You are trying to finish task without ${key}, enter the title and try again`;
@@ -40,19 +50,19 @@ function* addTask(action = {}) {
     });
 
     // define task id depend on the last item in array
-    current.id = list.length > 0 ? list[list.length - 1].id + 1 : 1;
+    task.id = tasks.length > 0 ? tasks[tasks.length - 1].id + 1 : 1;
 
     // Add currentTask to TaskList
     yield put({
       type: ADD_TASK,
       payload: {
-        task: current,
+        task,
       },
     });
 
     // reset current task
     yield put({
-      type: RESET_CURRENT_TASK,
+      type: CLEAR_TASK,
     });
 
     // reset component state
@@ -102,7 +112,7 @@ function* generateTasks() {
     );
 
     yield put({
-      type: UPDATE_CURRENT_TASK,
+      type: UPDATE_TASK,
       payload: {
         start,
         name,
@@ -116,12 +126,12 @@ function* generateTasks() {
 
 // Watchers
 function* actionWorker() {
-  yield takeEvery(FINISH_CURRENT_TASK, addTask);
+  yield takeEvery(FINISH_TASK, addTask);
   yield takeEvery(GENERATE_TASKS, generateTasks);
-  // We have to trigger by RESET_CURRENT_TASK instead of ADD_TASK,
+  // We have to trigger by CLEAR_TASK instead of ADD_TASK,
   // cause it make possible saveState with empty currentTask
   yield takeLatest(
-    [UPDATE_CURRENT_TASK, REMOVE_TASK, REMOVE_ALL_TASKS, RESET_CURRENT_TASK],
+    [START_TASK, UPDATE_TASK, CLEAR_TASK, REMOVE_TASK, REMOVE_ALL_TASKS],
     saveStateToLocalStorage
   );
 }
