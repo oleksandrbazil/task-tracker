@@ -11,7 +11,6 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
-import ConfirmDialog from '../ConfirmDialog';
 
 const styles = theme => ({
   button: {
@@ -50,11 +49,12 @@ const Index = ({ tasks, removeTask, classes }) => {
                   </Button>
                 </TableCell>
                 <TableCell>
-                  <ConfirmDialog
+                  <Button
                     className={classes.button}
-                    btnText="Delete"
-                    onAgree={() => removeTask({ id })}
-                  />
+                    onClick={() => removeTask({ id })}
+                  >
+                    Delete
+                  </Button>
                 </TableCell>
               </TableRow>
             );

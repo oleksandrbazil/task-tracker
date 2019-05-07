@@ -1,5 +1,6 @@
 import { takeLatest, select, put, call } from 'redux-saga/effects';
 import { showModal } from './modal';
+import { confirmDialogWorker } from './confirmDialog';
 import { generateRandom } from '../../utilities/taskGenerator';
 
 // Action Types
@@ -50,7 +51,6 @@ function* tryAddTask(action = {}) {
     const {
       dataSaga: { task },
     } = action;
-    // const task = yield select(selectCurrentTask);
 
     // define task id depend on the last item in array
     task.id = tasks.length > 0 ? tasks[tasks.length - 1].id + 1 : 1;
@@ -70,6 +70,8 @@ function* tryAddTask(action = {}) {
 export function* tryRemoveTask(action = {}) {
   try {
     const { sagaData: { id } = {} } = action;
+
+    yield* confirmDialogWorker();
 
     yield put({
       type: REMOVE_TASK,

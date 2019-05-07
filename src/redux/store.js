@@ -5,8 +5,9 @@ import { loadState } from '../localStorage';
 import currentTask from './modules/currentTask';
 import modal from './modules/modal';
 import tasks from './modules/tasks';
+import confirmDialog from './modules/confirmDialog';
 
-const reducers = combineReducers({ currentTask, tasks, modal });
+const reducers = combineReducers({ currentTask, tasks, modal, confirmDialog });
 const preloadedState = loadState();
 const sagaMiddleware = createSagaMiddleware();
 
