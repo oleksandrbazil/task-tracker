@@ -1,7 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { updateCurrentTask, finishTask } from '../../actions/tasks';
+import {
+  startTask,
+  updateTask,
+  finishTask,
+} from '../../redux/modules/currentTask';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
@@ -36,7 +40,7 @@ class Index extends React.Component {
 
   handleOnSubmit(e) {
     e.preventDefault();
-    const { start, finishTask, updateCurrentTask } = this.props;
+    const { start, startTask, finishTask } = this.props;
 
     // try to save task name anyway
     this.renameTask();
@@ -45,7 +49,7 @@ class Index extends React.Component {
     if (start) {
       finishTask({ callback: () => this.resetForm() });
     } else {
-      updateCurrentTask({ start: new Date().valueOf() });
+      startTask();
     }
   }
   resetForm() {
@@ -65,7 +69,8 @@ class Index extends React.Component {
 
   renameTask() {
     const { name } = this.state;
-    this.props.updateCurrentTask({ name });
+    const { updateTask } = this.props;
+    updateTask({ name });
   }
 
   render() {
@@ -97,15 +102,16 @@ class Index extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  name: state.tasks.current.name,
-  start: state.tasks.current.start,
+  name: state.currentTask.name,
+  start: state.currentTask.start,
 });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
+      startTask,
       finishTask,
-      updateCurrentTask,
+      updateTask,
     },
     dispatch
   );

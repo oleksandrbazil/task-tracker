@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { generateTasks } from '../../actions/tasks';
-import buildData from '../../utilities/buildData';
+import { generateTasks } from '../../redux/modules/tasks';
+import buildChartData from '../../utilities/buildChartData';
 import {
   BarChart,
   ResponsiveContainer,
@@ -22,30 +22,32 @@ class Index extends React.Component {
     super(props);
     this.state = {
       overlayMode: false,
+      generateOneByOne: false,
       data: [],
       bars: [],
     };
   }
 
   componentDidMount() {
-    this.rebuildData();
+    const { tasks } = this.props;
+    this.rebuildData(tasks);
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.tasks !== this.props.tasks) {
-      this.rebuildData();
+      this.rebuildData(nextProps.tasks);
     }
   }
 
   toggleOverlayMode() {
     const { overlayMode } = this.state;
-    this.setState({ overlayMode: !overlayMode }, () => this.rebuildData());
+    const { tasks } = this.props;
+    this.setState({ overlayMode: !overlayMode }, () => this.rebuildData(tasks));
   }
 
-  rebuildData() {
+  rebuildData(tasks) {
     const { overlayMode } = this.state;
-    const { tasks } = this.props;
-    const { data, bars } = buildData(tasks, overlayMode);
+    const { data, bars } = buildChartData(tasks, overlayMode);
     this.setState({
       data,
       bars,
@@ -53,7 +55,7 @@ class Index extends React.Component {
   }
 
   render() {
-    const { overlayMode, data, bars } = this.state;
+    const { overlayMode, data, bars, generateOneByOne } = this.state;
     const { generateTasks } = this.props;
 
     return (
@@ -61,8 +63,8 @@ class Index extends React.Component {
         <ResponsiveContainer width="100%" height={600}>
           <BarChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" domain={[0, 60]} />
-            <YAxis />
+            <XAxis dataKey="name" />
+            <YAxis domain={[0, 60]} />
             <Tooltip />
             <Legend legendType="circle" />
             {bars.map(({ id, stackId, fill }) => (
@@ -71,9 +73,23 @@ class Index extends React.Component {
           </BarChart>
         </ResponsiveContainer>
         <div>
-          <Button style={{ float: 'right' }} onClick={() => generateTasks()}>
-            GENERATE
-          </Button>
+          <div style={{ float: 'right' }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={generateOneByOne}
+                  onChange={() =>
+                    this.setState({ generateOneByOne: !generateOneByOne })
+                  }
+                />
+              }
+              label={'generateOneByOne'}
+            />
+            <Button onClick={() => generateTasks(generateOneByOne)}>
+              GENERATE
+            </Button>
+          </div>
+
           <FormControlLabel
             control={
               <Checkbox
@@ -107,7 +123,7 @@ class Index extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  tasks: state.tasks.list,
+  tasks: state.tasks,
 });
 
 const mapDispatchToProps = dispatch =>

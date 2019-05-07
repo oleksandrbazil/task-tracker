@@ -1,12 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { prettyTime, prettyTimeDiff } from '../../utilities/prettyTime';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import TextField from '@material-ui/core/TextField';
 import TaskNotFound from '../TaskNotFound';
-import Time from '../Time';
 
 const styles = theme => ({
   container: {
@@ -21,14 +21,7 @@ const styles = theme => ({
   },
 });
 
-export const Index = ({
-  classes,
-  tasks,
-  match: {
-    params: { taskId },
-  },
-}) => {
-  const task = tasks.find(t => t.id === parseInt(taskId));
+export const Index = ({ classes, task }) => {
   if (!task) {
     return <TaskNotFound />;
   }
@@ -50,7 +43,7 @@ export const Index = ({
         <FormControl className={classes.formControl}>
           <FormLabel>
             <span>Started At: </span>
-            <Time datetime={start} />
+            {prettyTime(start)}
           </FormLabel>
           <TextField
             id="start"
@@ -66,7 +59,7 @@ export const Index = ({
         <FormControl className={classes.formControl}>
           <FormLabel>
             <span>Finished At: </span>
-            <Time datetime={end} />
+            {prettyTime(end)}
           </FormLabel>
           <TextField
             id="end"
@@ -82,7 +75,7 @@ export const Index = ({
         <FormControl className={classes.formControl}>
           <FormLabel>
             <span>Spent: </span>
-            <Time datetimeDiff={{ start, end }} />
+            {prettyTimeDiff(start, end)}
           </FormLabel>
         </FormControl>
       </form>
@@ -90,7 +83,16 @@ export const Index = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  tasks: state.tasks.list,
-});
+const mapStateToProps = (
+  state,
+  {
+    match: {
+      params: { taskId },
+    },
+  }
+) => {
+  return {
+    task: state.tasks.find(task => task.id === parseInt(taskId)),
+  };
+};
 export default withStyles(styles)(connect(mapStateToProps)(Index));
