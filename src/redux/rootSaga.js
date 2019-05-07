@@ -17,12 +17,8 @@ import { saveState } from '../localStorage';
 import { generateRandom } from '../utilities/taskGenerator';
 
 // Selectors
-const getTasksStore = state => {
-  return state.tasks;
-};
-const getCurrentTaskStore = state => {
-  return state.currentTask;
-};
+const getTasksStore = state => state.tasks;
+const getCurrentTaskStore = state => state.currentTask;
 
 // Workers
 function* saveStateToLocalStorage() {
