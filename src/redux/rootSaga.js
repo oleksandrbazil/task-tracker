@@ -4,6 +4,7 @@ import {
   REMOVE_TASK,
   REMOVE_ALL_TASKS,
   GENERATE_TASKS,
+  IMPORT_TASKS,
 } from './modules/tasks';
 import { OPEN_MODAL } from './modules/modal';
 import {
@@ -13,6 +14,7 @@ import {
   CLEAR_TASK,
 } from './modules/currentTask';
 import { saveState } from '../localStorage';
+import generate from '../utilities/taskGenerator';
 
 // Selectors
 const getTasksStore = state => {
@@ -82,56 +84,30 @@ function* addTask(action = {}) {
 }
 
 function* generateTasks() {
-  const MIN_TASKS = 10; // items
-  const MAX_TASKS = 15; // items
-  const MIN_DURATION = 10; // minutes
-  const MAX_DURATION = 90; // minutes
-
-  const now = new Date();
-  const today = new Date(now.toLocaleDateString());
-  const tomorrow = new Date(new Date().setDate(today.getDate() + 1));
-
-  function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min)) + min;
-  }
-
   yield put({
     type: REMOVE_ALL_TASKS,
     payload: {},
   });
 
-  const numberOfTasks = getRandomInt(MIN_TASKS, MAX_TASKS);
+  const tasks = generate();
 
-  for (let i = 1; i < numberOfTasks; i++) {
-    const start = getRandomInt(today.valueOf(), tomorrow.valueOf());
-    const finish = new Date(start);
-    const name = `Random task #${i}`;
-    const end = getRandomInt(
-      finish.setMinutes(finish.getMinutes() + MIN_DURATION).valueOf(),
-      finish.setMinutes(finish.getMinutes() + MAX_DURATION).valueOf()
-    );
-
-    yield put({
-      type: UPDATE_TASK,
-      payload: {
-        start,
-        name,
-        end,
-      },
-    });
-
-    yield* addTask();
-  }
+  yield put({
+    type: IMPORT_TASKS,
+    payload: {
+      tasks,
+    },
+  });
 }
 
 // Watchers
 function* actionWorker() {
   yield takeEvery(FINISH_TASK, addTask);
   yield takeEvery(GENERATE_TASKS, generateTasks);
-  // We have to trigger by CLEAR_TASK instead of ADD_TASK,
-  // cause it make possible saveState with empty currentTask
+  // We better user last actionType intead of real meaning to make sure we will have correct structure of State
+  // ADD_TASK => CLEAR_TASK
+  // REMOVE_ALL_TASKS => IMPORT_TASKS
   yield takeLatest(
-    [START_TASK, UPDATE_TASK, CLEAR_TASK, REMOVE_TASK, REMOVE_ALL_TASKS],
+    [START_TASK, UPDATE_TASK, CLEAR_TASK, REMOVE_TASK, IMPORT_TASKS],
     saveStateToLocalStorage
   );
 }

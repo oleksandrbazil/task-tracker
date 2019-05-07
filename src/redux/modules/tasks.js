@@ -1,6 +1,7 @@
 // Action Types
 export const ADD_TASK = 'tasks/ADD_TASK';
 export const REMOVE_TASK = 'tasks/REMOVE_TASK';
+export const IMPORT_TASKS = 'tasks/IMPORT_TASKS';
 export const REMOVE_ALL_TASKS = 'tasks/REMOVE_ALL_TASKS';
 export const GENERATE_TASKS = 'tasks/GENERATE_TASKS';
 
@@ -13,6 +14,8 @@ export default (state = initialState, action) => {
       return state.concat([action.payload.task]);
     case REMOVE_TASK:
       return state.filter(task => task.id !== action.payload.id);
+    case IMPORT_TASKS:
+      return action.payload.tasks;
     case REMOVE_ALL_TASKS:
       return initialState;
     default:
